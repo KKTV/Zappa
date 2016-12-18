@@ -189,6 +189,13 @@ class ZappaCLI(object):
         )
 
         ##
+        # Package
+        ##
+        package_parser = subparsers.add_parser(
+            'package', parents=[env_parser], help='Package application.'
+        )
+
+        ##
         # Deploy
         ##
         subparsers.add_parser(
@@ -389,7 +396,9 @@ class ZappaCLI(object):
         self.callback('settings')
 
         # Hand it off
-        if command == 'deploy': # pragma: no cover
+        if command == 'package': # pragma: no cover
+            self.package()
+        elif command == 'deploy': # pragma: no cover
             self.deploy()
         elif command == 'update': # pragma: no cover
             self.update()
@@ -437,6 +446,20 @@ class ZappaCLI(object):
     ##
     # The Commands
     ##
+
+    def package(self):
+        """
+        Package your project.
+
+        """
+
+        # Execute the prebuild script
+        if self.prebuild_script:
+            self.execute_prebuild_script()
+
+        # Create the Lambda Zip
+        self.create_package()
+        self.callback('zip')
 
     def deploy(self):
         """
